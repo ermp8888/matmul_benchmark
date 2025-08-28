@@ -42,7 +42,7 @@ bool compareMatrices(const Matrix<T>& A, const Matrix<T>& B, double tol = 1e-6) 
 
 
 int main(int argc, char** argv) {
-    if (argc < 5) {
+    if (argc < 6) {
         std::cerr << "Usage: " << argv[0] 
                   << " <rows_A> <cols_A> <rows_B> <cols_B>\n";
         return 1;
@@ -51,26 +51,32 @@ int main(int argc, char** argv) {
     int cols_A = std::atoi(argv[2]);
     int rows_B = std::atoi(argv[3]);
     int cols_B = std::atoi(argv[4]);
+    int tileSize = std::atoi(argv[5]);
 
     assert(cols_A == rows_B && "Matrix dimensions do not match for multiplication");
 
-    Matrix<int> A(rows_A, cols_A), B(rows_B, cols_B);
+    Matrix<int> A(rows_A, cols_A), B(rows_B, cols_B), B_T(cols_B, rows_B);
 
-    A.fillSeq();
-    B.fillSeq();
+    // A.fillSeq();
+    // B.fillSeq();
+
+    A.fillRandom();
+    B.fillRandom();
 
     auto C_ref = matmul_ref(A, B);
     auto C_ijk = matmul_ijk(A, B);
     auto C_ikj = matmul_ikj(A, B);
     auto C_transpose = mat_transpose(A);
     auto C_transpose_mult = matmul_transpose(A, B);
-    auto C_tiled = tiledMatMul(A, B, 16); // tile size 16
+    auto C_tiled = tiledMatMul(A, B, tileSize); // tile size from argument
+    auto C_tiled_transpose = tiledMatMulWithTranspose(A, B, tileSize);
 
     bool pass = true;
     pass &= compareMatrices(C_ref, C_ijk);
     pass &= compareMatrices(C_ref, C_ikj);
     pass &= compareMatrices(C_ref, C_transpose_mult);
     pass &= compareMatrices(C_ref, C_tiled);
+    pass &= compareMatrices(C_ref, C_tiled_transpose);
 
     if (pass) {
         std::cout << "All matmul tests passed!\n";

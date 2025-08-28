@@ -24,8 +24,17 @@ public:
     }
 };
 
+// Function to calculate performance change (%)
+double performanceChange(double t1, double t2) {
+    if (t1 == 0) {
+        cerr << "Error: baseline time t1 cannot be zero." << endl;
+        return 0.0;
+    }
+    return ((t1 - t2) / t1) * 100.0;
+}
+
 int main(int argc, char** argv) {
-    // int N = 1024; // matrix size
+
     if (argc < 6) {
         std::cerr << "Usage: " << argv[0] 
                   << " <rows_A> <cols_A> <rows_B> <cols_B> <tile_size>\n";
@@ -45,25 +54,25 @@ int main(int argc, char** argv) {
     B.fillRandom();
 
     // Benchmark method 1
-    // Timer t1;
-    // auto C1 = matmul_ijk(A, B);
-    // double timesec1 = t1.elapsedSec();
-    // double timemilsec1 = t1.elapsedMilli();
-    // double gflops1 = 2.0 * rows_A * cols_A * cols_B / (timesec1 * 1e9);
+    Timer t1;
+    auto C1 = matmul_ijk(A, B);
+    double timesec1 = t1.elapsedSec();
+    double timemilsec1 = t1.elapsedMilli();
+    double gflops1 = 2.0 * rows_A * cols_A * cols_B / (timesec1 * 1e9);
 
     // Benchmark method 2
-    // Timer t2;
-    // auto C2 = matmul_ikj(A, B);
-    // double timesec2 = t2.elapsedSec();
-    // double timemilsec2 = t2.elapsedMilli();
-    // double gflops2 = 2.0 * rows_A * cols_A * cols_B / (timesec2 * 1e9);
+    Timer t2;
+    auto C2 = matmul_ikj(A, B);
+    double timesec2 = t2.elapsedSec();
+    double timemilsec2 = t2.elapsedMilli();
+    double gflops2 = 2.0 * rows_A * cols_A * cols_B / (timesec2 * 1e9);
 
     // Benchmark method 3
-    // Timer t3;
-    // auto C3 = matmul_transpose(A, B);
-    // double timesec3 = t3.elapsedSec();
-    // double timemilsec3 = t3.elapsedMilli();
-    // double gflops3 = 2.0 * rows_A * cols_A * cols_B / (timesec3 * 1e9);
+    Timer t3;
+    auto C3 = matmul_transpose(A, B);
+    double timesec3 = t3.elapsedSec();
+    double timemilsec3 = t3.elapsedMilli();
+    double gflops3 = 2.0 * rows_A * cols_A * cols_B / (timesec3 * 1e9);
 
     // Benchmark method 4 (tiled)
     Timer t4;
@@ -72,12 +81,20 @@ int main(int argc, char** argv) {
     double timemilsec4 = t4.elapsedMilli();
     double gflops4 = 2.0 * rows_A * cols_A * cols_B / (timesec4 * 1e9);
 
+    // Benchmark method 4 (transpose with tiled)
+    Timer t5;
+    auto c5 = tiledMatMulWithTranspose(A, B, tile_size);
+    double timesec5 = t5.elapsedSec();
+    double timemilsec5 = t5.elapsedMilli();
+    double gflops5 = 2.0 * rows_A * cols_A * cols_B / (timesec5 * 1e9);
+
     
     std::cout << "Matrix size: " << rows_A << "x" << cols_B << "\n";
-    // std::cout << "Method (i-j-k): " << timemilsec1 << " ms, " << gflops1 << " GFLOPS\n";
-    // std::cout << "Method (i-k-j): " << timemilsec2 << " ms, " << gflops2 << " GFLOPS\n";
-    // std::cout << "Method (transposed): " << timemilsec3 << " ms, " << gflops3 << " GFLOPS\n";
-    std::cout << "Method (tiled): " << timemilsec4 << " ms, " << gflops4 << " GFLOPS\n";
+    std::cout << "Method (i-j-k): " << timemilsec1 << " ms, " << gflops1 << " GFLOPS\n" << endl;
+    std::cout << "Method (i-k-j): " << timemilsec2 << " ms, " << gflops2 << " GFLOPS\n" << " Perf Change: " << performanceChange(timemilsec1, timemilsec2) << "%\n";
+    std::cout << "Method (transposed): " << timemilsec3 << " ms, " << gflops3 << " GFLOPS\n" << " Perf Change: " << performanceChange(timemilsec1, timemilsec3) << "%\n";
+    std::cout << "Method (tiled): " << timemilsec4 << " ms, " << gflops4 << " GFLOPS\n" << " Perf Change: " << performanceChange(timemilsec1, timemilsec4) << "%\n";
+    std::cout << "Method (tiled with transpose): " << timemilsec5 << " ms, " << gflops5 << " GFLOPS\n" << " Perf Change: " << performanceChange(timemilsec1, timemilsec5) << "%\n";
 
     return 0;
 }
