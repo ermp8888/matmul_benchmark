@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -march=native -funroll-loops -ffast-math CMakeFiles/bench_matmul.dir/benchmarks/bench_matmul.cpp.o -o bench_matmul  libdlops.a 

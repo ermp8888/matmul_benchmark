@@ -1,0 +1,6 @@
+/home/parvez/Desktop/dlops/build/CMakeFiles/dlops.dir
+/home/parvez/Desktop/dlops/build/CMakeFiles/bench_matmul.dir
+/home/parvez/Desktop/dlops/build/CMakeFiles/test_matmul.dir
+/home/parvez/Desktop/dlops/build/CMakeFiles/main_exec.dir
+/home/parvez/Desktop/dlops/build/CMakeFiles/edit_cache.dir
+/home/parvez/Desktop/dlops/build/CMakeFiles/rebuild_cache.dir

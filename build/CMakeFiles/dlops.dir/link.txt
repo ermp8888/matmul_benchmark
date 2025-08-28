@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdlops.a CMakeFiles/dlops.dir/src/main.cpp.o
+/usr/bin/ranlib libdlops.a
